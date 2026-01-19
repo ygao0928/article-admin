@@ -4,7 +4,7 @@ import { Folder } from 'lucide-react'
 
 export function SettingsFolder() {
   return (
-    <ContentSection title='下载目录配置' desc='管理类目-下载器-下载目录的关系' icon={<Folder className='h-5 w-5 text-primary' />}>
+    <ContentSection title='下载目录路由配置' desc='管理类目与下载目录的关系,用于自动化操作' icon={<Folder className='h-5 w-5 text-primary' />}>
       <FolderForm />
     </ContentSection>
   )
