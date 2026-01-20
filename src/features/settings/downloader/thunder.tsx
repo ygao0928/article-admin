@@ -1,91 +1,132 @@
-import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import * as z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getConfig, postConfig } from '@/api/config.ts'
 import { Button } from '@/components/ui/button.tsx'
-import { Input } from '@/components/ui/input.tsx'
-import { Label } from '@/components/ui/label.tsx'
 import {
-  type PathItem,
-  PathListInput,
-} from '@/features/settings/downloader/path-input-list.tsx'
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { PathListInput } from '@/features/settings/downloader/path-input-list.tsx'
+import { Save } from 'lucide-react'
 
-export type ThunderSchema = {
-  url: string
-  authorization: string
-  save_paths: PathItem[]
-}
+const thunderSchema = z.object({
+  url: z.string().min(1, '输入地址'),
+  authorization: z.string(),
+  save_paths: z.array(
+    z.object({
+      path: z.string().min(1, '输入保存地址'),
+      label: z.string().min(1, '输入保存地址别名'),
+    })
+  ),
+})
 
 export function Thunder({ downloaderId }: { downloaderId: string }) {
-  const queryClient = useQueryClient()
-  const [downloader, setDownloader] = useState<ThunderSchema>({
-    url: '',
-    authorization: '',
-    save_paths: [],
+  const downloader = useForm<z.infer<typeof thunderSchema>>({
+    resolver: zodResolver(thunderSchema),
+    defaultValues: {
+      url: '',
+      authorization: '',
+      save_paths: [],
+    },
   })
+  const queryClient = useQueryClient()
+
   const { data } = useQuery({
     queryKey: ['downloader', downloaderId],
     queryFn: async () => {
-      const res = await getConfig<ThunderSchema>('Downloader.' + downloaderId)
-      if (res.data) {
-        setDownloader(res.data)
-      }
-      return res?.data
+      const res = await getConfig<z.infer<typeof thunderSchema>>(
+        'Downloader.' + downloaderId
+      )
+      return res.data
     },
     staleTime: 5 * 60 * 1000,
   })
 
+  const updateMutation = useMutation({
+    mutationFn: async (values: z.infer<typeof thunderSchema>) => {
+      return await postConfig('Downloader.' + downloaderId, values as never)
+    },
+    onSuccess: (res) => {
+      toast.success(res.message)
+      queryClient.invalidateQueries({ queryKey: ['downloader', downloaderId] })
+      queryClient.invalidateQueries({ queryKey: ['downloaders'] })
+    },
+  })
+
   useEffect(() => {
     if (data) {
-      setDownloader(data)
+      downloader.reset(data)
     }
-  }, [data])
+  }, [data, downloader])
 
-  const handleSave = async () => {
-    const res = await postConfig(
-      'Downloader.' + downloaderId,
-      downloader as never
-    )
-    toast.success(res.message)
-    await queryClient.invalidateQueries({
-      queryKey: ['downloader', downloaderId],
-    })
-    await queryClient.invalidateQueries({ queryKey: ['downloaders'] })
-  }
   return (
-    <>
-      <div className='space-y-2'>
-        <Label>webui地址</Label>
-        <Input
-          type='text'
-          value={downloader?.url}
-          onChange={(e) =>
-            setDownloader((prev) => ({ ...prev, url: e.target.value }))
-          }
-        />
-      </div>
-      <div className='space-y-2'>
-        <Label>请求头</Label>
-        <Input
-          type='text'
-          value={downloader.authorization}
-          onChange={(e) =>
-            setDownloader((prev) => ({ ...prev, password: e.target.value }))
-          }
-        />
-      </div>
-      <div className='space-y-2'>
-        <Label>下载目录ID</Label>
-        <PathListInput
-          value={downloader.save_paths}
-          onChange={(v) =>
-            setDownloader((prev) => ({ ...prev, save_paths: v }))
-          }
-        />
-      </div>
-      <div className='flex justify-end'>
-        <Button onClick={handleSave}>保存配置</Button>
-      </div>
-    </>
+    <div className='w-full max-w-md'>
+      <Form {...downloader}>
+        <form
+          onSubmit={downloader.handleSubmit((values) => {
+            updateMutation.mutate(values)
+          })}
+          className='space-y-4'
+        >
+          <FormField
+            control={downloader.control}
+            name='url'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>WEB UI地址</FormLabel>
+                <FormControl>
+                  <Input placeholder='输入WEB UI地址' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={downloader.control}
+            name='authorization'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>用户名</FormLabel>
+                <FormControl>
+                  <Input placeholder='输入请求头' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={downloader.control}
+            name='save_paths'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>保存目录ID</FormLabel>
+                <FormControl>
+                  <PathListInput
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type='submit' className='min-w-[140px]'>
+            <Save className='mr-2 h-4 w-4' />
+            保存配置
+          </Button>
+        </form>
+      </Form>
+    </div>
   )
 }

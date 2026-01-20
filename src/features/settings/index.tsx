@@ -1,6 +1,5 @@
 import { Outlet } from '@tanstack/react-router';
 import {
-  Monitor,
   Bell,
   Download,
   Folder,
@@ -36,12 +35,7 @@ const sidebarNavItems = [
     title: '通知',
     href: '/settings/notifications',
     icon: <Bell size={18} />,
-  },
-  {
-    title: '外观',
-    href: '/settings/display',
-    icon: <Monitor size={18} />,
-  },
+  }
 ]
 
 export function Settings() {

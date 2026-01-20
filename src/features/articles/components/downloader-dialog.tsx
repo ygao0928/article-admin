@@ -35,7 +35,7 @@ export function DownloaderDialog({
   trigger,
 }: DownloaderDialogProps) {
   const [open, setOpen] = useState(false)
-  const [selectedDownloader, setSelectedDownloader] = useState<string>('')
+  const [selectedDownloader, setSelectedDownloader] = useState<string>('auto')
   const [selectedPath, setSelectedPath] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 

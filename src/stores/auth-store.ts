@@ -18,7 +18,6 @@ export const useAuthStore = create<AuthState>()((set) => {
   const initToken = cookieState ? JSON.parse(cookieState) : ''
   return {
     auth: {
-
       accessToken: initToken,
       setAccessToken: (accessToken) =>
         set((state) => {

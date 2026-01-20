@@ -1,56 +1,83 @@
-import { useState } from 'react'
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-} from '@/components/ui/field.tsx'
-import { Input } from '@/components/ui/input'
+import * as z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+import { update_user } from '@/api/user.ts'
 import { Button } from '@/components/ui/button.tsx'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form.tsx'
+import { Input } from '@/components/ui/input'
+import { Save } from 'lucide-react'
 
-interface accountFormSchema {
-  username: string
-  password: string
-}
+
+const accountScheme = z.object({
+  username: z.string().min(2, '用户名至少2位'),
+  password: z.string().min(8, '至少8位密码'),
+})
 
 export function AccountForm() {
-  const [account, setAccount] = useState<accountFormSchema>({
-    username:  '',
-    password: '',
+  const account = useForm<z.infer<typeof accountScheme>>({
+    resolver: zodResolver(accountScheme),
+    defaultValues: {
+      username: '',
+      password: '',
+    },
   })
+
+  const handleSubmit = async (data: z.infer<typeof accountScheme>) => {
+    const res = await update_user(data)
+    toast.success(res.message)
+  }
 
   return (
     <div className='w-full max-w-md'>
-      <FieldSet>
-        <FieldGroup>
-          <Field>
-            <FieldLabel>用户名</FieldLabel>
-            <Input
-              type='text'
-              value={account.username}
-              onChange={(e) =>
-                setAccount({ ...account, username: e.target.value })
-              }
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor='password'>密码</FieldLabel>
-            <FieldDescription>至少8位</FieldDescription>
-            <Input
-              type='password'
-              placeholder='••••••••'
-              value={account.password}
-              onChange={(e) =>
-                setAccount({ ...account, password: e.target.value })
-              }
-            />
-          </Field>
-          <Field orientation="horizontal">
-            <Button type="submit">提交</Button>
-          </Field>
-        </FieldGroup>
-      </FieldSet>
+      <Form {...account}>
+        <form
+          onSubmit={account.handleSubmit(handleSubmit)}
+          className='space-y-4'
+        >
+          <FormField
+            control={account.control}
+            name='username'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>用户名</FormLabel>
+                <FormControl>
+                  <Input placeholder='输入用户名' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={account.control}
+            name='password'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>密码</FormLabel>
+                <FormControl>
+                  <Input
+                    type='password'
+                    placeholder='输入登录密码'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type='submit' className='min-w-[140px]'>
+            <Save className='mr-2 h-4 w-4' />
+            保存配置
+          </Button>
+        </form>
+      </Form>
     </div>
   )
 }
