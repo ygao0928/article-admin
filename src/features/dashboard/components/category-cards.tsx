@@ -1,8 +1,8 @@
-import type { Category } from '@/types/article.ts'
 import { Layers } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import type { Section } from '@/api/article.ts'
 
-export function CategoryCards({ data }: { data: Category[] }) {
+export function CategoryCards({ data }: { data: Section[] }) {
   return (
     <div className='grid grid-cols-2 gap-4 md:grid-cols-6'>
       {data.map((cat,index) => (

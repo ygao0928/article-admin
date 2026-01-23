@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,7 +7,7 @@ import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { login } from '@/api/user.ts'
 import { useAuthStore } from '@/stores/auth-store'
-import { sleep, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -22,7 +22,7 @@ import { PasswordInput } from '@/components/password-input'
 
 const formSchema = z.object({
   username: z.string(),
-  password: z.string().min(7, 'Password must be at least 7 characters long'),
+  password: z.string().min(8, '密码至少8位'),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -38,6 +38,13 @@ export function UserAuthForm({
   const navigate = useNavigate()
   const { auth } = useAuthStore()
 
+  useEffect(() => {
+    if (auth.accessToken) {
+      const targetPath = redirectTo || '/'
+      navigate({ to: targetPath, replace: true })
+    }
+  }, [auth, navigate, redirectTo])
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,25 +53,17 @@ export function UserAuthForm({
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-
-    toast.promise(sleep(1), {
-      loading: '登入中...',
-      success: async () => {
-        setIsLoading(false)
-
-        // Mock successful authentication with expiry computed at success time
-        const res = await login(data)
-        if(res.code === 0){
-          auth.setAccessToken(res.data.access_token)
-          const targetPath = redirectTo || '/'
-          await navigate({ to: targetPath, replace: true })
-          return `欢迎回来, ${data.username}!`
-        }
-      },
-      error: '登录失败',
-    })
+    const res = await login(data)
+    if (res.code === 0) {
+      auth.setAccessToken(res.data.access_token)
+      const targetPath = redirectTo || '/'
+      toast.success(`欢迎回来, ${data.username}!`)
+      await navigate({ to: targetPath, replace: true })
+    }else {
+      toast.error(res.message)
+    }
   }
 
   return (
@@ -78,12 +77,18 @@ export function UserAuthForm({
           control={form.control}
           name='username'
           render={({ field }) => (
-            <FormItem>
+            <FormItem  className='relative'>
               <FormLabel>用户名</FormLabel>
               <FormControl>
                 <Input placeholder='' {...field} />
               </FormControl>
               <FormMessage />
+              <Link
+                to='/sign-up'
+                className='absolute end-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
+              >
+                首次登录?
+              </Link>
             </FormItem>
           )}
         />
@@ -106,6 +111,7 @@ export function UserAuthForm({
             </FormItem>
           )}
         />
+
         <Button className='mt-2' disabled={isLoading}>
           {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
           登入

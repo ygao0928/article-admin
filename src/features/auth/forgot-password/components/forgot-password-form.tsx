@@ -3,9 +3,10 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2, RefreshCcw } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep, cn } from '@/lib/utils'
+import { clearUser, getResetToken } from '@/api/user.ts'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -18,9 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 
 const formSchema = z.object({
-  email: z.email({
-    error: (iss) => (iss.input === '' ? 'Please enter your email' : undefined),
-  }),
+  token: z.string().min(1, '输入口令'),
 })
 
 export function ForgotPasswordForm({
@@ -32,24 +31,27 @@ export function ForgotPasswordForm({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: '' },
+    defaultValues: { token: '' },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
+    const res = await clearUser(data.token)
+    if (res.code === 0) {
+      toast.success('前往注册账号')
+      navigate({ to: '/sign-up', replace: true })
+    } else {
+      toast.error(res.message)
+    }
+  }
 
-    toast.promise(sleep(2000), {
-      loading: 'Sending email...',
-      success: () => {
-        setIsLoading(false)
-        form.reset()
-        navigate({ to: '/otp' })
-        return `Email sent to ${data.email}`
-      },
-      error: 'Error',
-    })
+  async function handleGenerateToken() {
+    const res = await getResetToken()
+    if (res.code === 0) {
+      toast.success(res.message)
+    } else {
+      toast.error(res.message)
+    }
   }
 
   return (
@@ -61,19 +63,33 @@ export function ForgotPasswordForm({
       >
         <FormField
           control={form.control}
-          name='email'
+          name='token'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              {/* 修改：让 Label 和 生成按钮 在同一行 */}
+              <div className='flex items-center justify-between'>
+                <FormLabel>口令</FormLabel>
+                <Button
+                  type='button' // 必须指定 type="button"，否则会触发 form submit
+                  variant='ghost'
+                  size='sm'
+                  className='h-8 px-2 text-xs text-muted-foreground'
+                  onClick={handleGenerateToken}
+                >
+                  <RefreshCcw className='mr-1 h-3 w-3' />
+                  随机生成
+                </Button>
+              </div>
+
               <FormControl>
-                <Input placeholder='name@example.com' {...field} />
+                <Input placeholder='输入或生成口令' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className='mt-2' disabled={isLoading}>
-          Continue
+        <Button className='mt-2 w-full' disabled={isLoading}>
+          继续
           {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRight />}
         </Button>
       </form>

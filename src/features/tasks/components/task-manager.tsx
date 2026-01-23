@@ -156,7 +156,7 @@ export default function TaskManager() {
         <div className='space-y-1'>
           <p className='flex items-center gap-1 text-xs text-muted-foreground md:text-sm'>
             <Zap className='h-3 w-3 fill-amber-500 text-amber-500' />
-            当前活跃任务: {tasks?.length}
+            当前活跃任务: {tasks?.filter(item=>item.enable).length}
           </p>
         </div>
         <ResponsiveModal

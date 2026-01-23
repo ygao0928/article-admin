@@ -16,9 +16,9 @@ export function login(data: { username: string; password: string }) {
   })
 }
 
-export function create_user(params: { username: string; password: string }) {
+export function register(params: { username: string; password: string }) {
   return request({
-    url: '/users',
+    url: '/users/',
     method: 'post',
     params,
   })
@@ -26,8 +26,22 @@ export function create_user(params: { username: string; password: string }) {
 
 export function update_user(params: { username: string; password: string }) {
   return request({
-    url: '/users',
+    url: '/users/',
     method: 'put',
     params,
+  })
+}
+
+export function getResetToken() {
+  return request({
+    url: '/users/reset-token',
+    method: 'get',
+  })
+}
+
+export function clearUser(token: string) {
+  return request({
+    url: `/users/reset?token=${token}`,
+    method: 'delete',
   })
 }

@@ -39,7 +39,7 @@ export interface TaskLogResult {
 }
 
 export function getTasks() {
-  return request<Task[]>({ url: '/tasks' })
+  return request<Task[]>({ url: '/tasks/' })
 }
 
 
@@ -48,11 +48,11 @@ export function fetchFuncList() {
 }
 
 export function addTask(task: Task) {
-  return request({ url: '/tasks', method: 'post', data: task })
+  return request({ url: '/tasks/', method: 'post', data: task })
 }
 
 export function updateTask(task: Task) {
-  return request({ url: '/tasks', method: 'put', data: task })
+  return request({ url: '/tasks/', method: 'put', data: task })
 }
 
 export function deleteTask(task_id: number) {

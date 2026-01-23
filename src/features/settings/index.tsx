@@ -16,7 +16,7 @@ const sidebarNavItems = [
   },
   {
     title: '路由',
-    href: '/settings/folder',
+    href: '/settings/rule',
     icon: <Route size={18} />,
   },
   {

@@ -1,9 +1,9 @@
-import type { Category } from '@/types/article.ts';
 import { Database, Layers } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card.tsx'
+import type { Section } from '@/api/article.ts'
 
 
-export function SummaryCards({ data }: { data: Category[] }) {
+export function SummaryCards({ data }: { data: Section[] }) {
   const total = data.reduce((sum, c) => sum + c.count, 0)
 
   return (

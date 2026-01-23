@@ -1,7 +1,11 @@
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Save } from 'lucide-react'
+import { toast } from 'sonner'
+import { getConfig, postConfig } from '@/api/config.ts'
 import { Button } from '@/components/ui/button.tsx'
 import {
   Form,
@@ -29,16 +33,24 @@ const wechatSchema = z.object({
 })
 
 type wechatValues = z.infer<typeof wechatSchema>
+const CONFIG_KEY = 'Notification.wechat'
+const wxTemplate = `🗂 分类：{{ section }} / {{ category }}
+📦 大小：{{ size }}
+🗓 发布：{{ publish_date }}
+🆔 TID：{{ tid }}
+
+⬇️ 下载器：{{ downloader }}
+📂 保存路径：{{ save_path }}
+
+🔗 详情页：
+{{ detail_url }}
+
+🧲 Magnet：
+{{ magnet }}
+`
 
 export function WechatNotificationForm() {
-  const wxTemplate = `📁 板块：{{section}} / {{type}}
-📦 体积：{{size}}
-🗓 发布：{{publish_date}}
-⬇️ 下载器：{{downloader}}
-📂 保存目录：{{save_path}}
-🔗 Magnet：
-{{magnet}}`
-
+  const queryClient = useQueryClient()
   const form = useForm<wechatValues>({
     resolver: zodResolver(wechatSchema),
     defaultValues: {
@@ -55,10 +67,30 @@ export function WechatNotificationForm() {
     },
   })
 
-  const onSubmit = (values: wechatValues) => {
-    console.log('wechat config', values)
-  }
+  const { data } = useQuery({
+    queryKey: [CONFIG_KEY],
+    queryFn: async () => {
+      const res = await getConfig<wechatValues>(CONFIG_KEY)
+      return res.data
+    },
+    staleTime: 5 * 60 * 1000,
+  })
 
+  useEffect(() => {
+    if (data) {
+      form.reset(data)
+    }
+  }, [data, form])
+
+  const onSubmit = async (values: wechatValues) => {
+    const res = await postConfig(CONFIG_KEY, values as never)
+    if (res.code === 0) {
+      toast.success(res.message)
+      queryClient.invalidateQueries({ queryKey: [CONFIG_KEY] })
+    } else {
+      toast.error(res.message)
+    }
+  }
   return (
     <Form {...form}>
       <form

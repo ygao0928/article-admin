@@ -1,19 +1,14 @@
 import { request } from './request'
 
-
 export interface SavePath {
   path: string
   label: string
 }
 
-export interface Downloader{
-  id: string,
+export interface Downloader {
+  id: string
   save_paths: SavePath[]
 }
-
-
-
-
 
 export function getConfig<T>(key: string) {
   return request<T>({
@@ -24,7 +19,7 @@ export function getConfig<T>(key: string) {
 
 export function postConfig(key: string, data: never) {
   return request({
-    url: `/config`,
+    url: `/config/`,
     method: 'post',
     data: {
       key: key,
@@ -32,7 +27,6 @@ export function postConfig(key: string, data: never) {
     },
   })
 }
-
 
 export function fetchDownloaderList() {
   return request<Downloader[]>({

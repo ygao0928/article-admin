@@ -24,7 +24,6 @@ import {
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import { ResponsiveModal } from '@/components/response-modal.tsx'
 
 const formSchema = z.object({
@@ -98,10 +97,12 @@ export function DownloaderDialog({ articleId }: DownloaderDialogProps) {
       }
     },
     onSuccess: (res) => {
-      toast.success(res.message)
-      setOpen(false)
-      form.reset()
-      updateSockStatus()
+      if(res.code === 0){
+        toast.success(res.message)
+        setOpen(false)
+        form.reset()
+        updateSockStatus()
+      }
     },
     onError: (err: Error) => {
       toast.error(`推送失败，请重试:${err}`)
@@ -152,7 +153,7 @@ export function DownloaderDialog({ articleId }: DownloaderDialogProps) {
               control={form.control}
               name='downloader'
               render={({ field }) => (
-                <FormItem className='space-y-3'>
+                <FormItem className='space-y-2'>
                   <FormLabel className='flex items-center gap-2'>
                     <HardDrive className='h-4 w-4' />
                     下载器
@@ -206,8 +207,6 @@ export function DownloaderDialog({ articleId }: DownloaderDialogProps) {
                         </Label>
                       </div>
 
-                      <Separator className='my-2' />
-
                       {downloaders?.map((downloader) => (
                         <div
                           key={downloader.id}
@@ -239,15 +238,13 @@ export function DownloaderDialog({ articleId }: DownloaderDialogProps) {
               )}
             />
 
-            {/* 下载目录选择 - 仅在非自动模式下显示 */}
             {selectedDownloader !== 'auto' && currentDownloader && (
               <>
-                <Separator />
                 <FormField
                   control={form.control}
                   name='savePath'
                   render={({ field }) => (
-                    <FormItem className='space-y-3'>
+                    <FormItem className='space-y-2'>
                       <FormLabel className='flex items-center gap-2'>
                         <FolderOpen className='h-4 w-4' />
                         下载目录
@@ -256,7 +253,7 @@ export function DownloaderDialog({ articleId }: DownloaderDialogProps) {
                         </span>
                       </FormLabel>
                       <FormControl>
-                        <ScrollArea className='h-[200px] rounded-md border'>
+                        <ScrollArea className='h-[160px] rounded-md border'>
                           <RadioGroup
                             onValueChange={field.onChange}
                             value={field.value}

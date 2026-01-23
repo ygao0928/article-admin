@@ -7,14 +7,14 @@ import { useDebounce } from '@/hooks/use-debounce.tsx'
 import { ArticleCard } from '@/features/articles/components/article-card.tsx'
 import { FilterBar } from '@/features/articles/components/filter-bar.tsx'
 
-const PAGE_SIZE = 10
-
 export function ArticlesMobile() {
   const { keyword } = useSearch()
   const debouncedKeyword = useDebounce(keyword, 300)
   const [filter, setFilter] = useState({
+    page: 1,
+    page_size: 10,
     keyword: '',
-    category: '',
+    section: '',
   })
 
   const loadMoreRef = useRef<HTMLDivElement>(null)
@@ -24,9 +24,9 @@ export function ArticlesMobile() {
       queryKey: ['articles-infinite', filter, debouncedKeyword],
       queryFn: async ({ pageParam = 1 }) => {
         const res = await getArticles({
+          ...filter,
           page: pageParam,
-          pageSize: PAGE_SIZE,
-          filter: { ...filter, keyword: debouncedKeyword },
+          keyword: debouncedKeyword,
         })
         return res.data
       },

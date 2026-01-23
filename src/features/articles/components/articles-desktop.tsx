@@ -9,25 +9,20 @@ import { CommonPagination } from '@/components/pagination.tsx'
 import { ArticleCard } from '@/features/articles/components/article-card.tsx'
 import { FilterBar } from '@/features/articles/components/filter-bar.tsx'
 
-const PAGE_SIZE = 30
-
 export function ArticlesDesktop() {
   const { keyword } = useSearch()
   const debouncedKeyword = useDebounce(keyword, 300)
-  const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
+    page: 1,
+    page_size: 30,
     keyword: '',
-    category: '',
+    section: '',
   })
 
   const { data, isLoading } = useQuery({
-    queryKey: ['articles', page, filter, debouncedKeyword],
+    queryKey: ['articles', filter, debouncedKeyword],
     queryFn: async () => {
-      const res = await getArticles({
-        page: page,
-        pageSize: PAGE_SIZE,
-        filter: { ...filter, keyword: debouncedKeyword },
-      })
+      const res = await getArticles({ ...filter, keyword: debouncedKeyword })
       return res.data
     },
     staleTime: 5 * 60 * 1000,
@@ -101,10 +96,10 @@ export function ArticlesDesktop() {
       {/* ④ 分页 */}
       <div className='sticky bottom-0 z-30 mt-2'>
         <CommonPagination
-          page={page}
+          page={filter.page}
           total={data?.total || 0}
-          pageSize={PAGE_SIZE}
-          onChange={setPage}
+          pageSize={filter.page_size}
+          onChange={(v) => setFilter((prev) => ({ ...prev, page: v }))}
         />
       </div>
     </div>

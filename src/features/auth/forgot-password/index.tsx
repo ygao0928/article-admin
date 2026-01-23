@@ -16,11 +16,10 @@ export function ForgotPassword() {
       <Card className='gap-4'>
         <CardHeader>
           <CardTitle className='text-lg tracking-tight'>
-            Forgot Password
+            忘记密码
           </CardTitle>
           <CardDescription>
-            Enter your registered email and <br /> we will send you a link to
-            reset your password.
+            输入服务端生成的口令，来重置用户。注意：此操作会删除数据库用户信息,需重新注册
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -28,12 +27,12 @@ export function ForgotPassword() {
         </CardContent>
         <CardFooter>
           <p className='mx-auto px-8 text-center text-sm text-balance text-muted-foreground'>
-            Don't have an account?{' '}
+           没有账号?{' '}
             <Link
               to='/sign-up'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Sign up
+              注册
             </Link>
             .
           </p>

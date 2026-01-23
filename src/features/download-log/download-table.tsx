@@ -168,8 +168,8 @@ export function DownloadLogTable() {
           <TableHeader>
             <TableRow>
               <TableHead>tid</TableHead>
+              <TableHead>板块</TableHead>
               <TableHead>分类</TableHead>
-              <TableHead>子类型</TableHead>
               <TableHead>标题</TableHead>
               <TableHead>大小</TableHead>
               <TableHead>预览图</TableHead>
@@ -197,7 +197,7 @@ export function DownloadLogTable() {
                 <TableRow key={item.id}>
                   <TableCell>{item.tid}</TableCell>
                   <TableCell>{item.section}</TableCell>
-                  <TableCell>{item.sub_type}</TableCell>
+                  <TableCell>{item.category}</TableCell>
                   <TableCell className='max-w-[260px] truncate'>
                     {item.title}
                   </TableCell>

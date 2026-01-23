@@ -157,9 +157,9 @@ export function ArticleCard({ article }: { article: Article }) {
             {article.section}
           </Badge>
 
-          {article.sub_type && (
+          {article.category && (
             <Badge variant='outline' className='shadow-sm'>
-              {article.sub_type}
+              {article.category}
             </Badge>
           )}
 

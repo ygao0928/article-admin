@@ -1,6 +1,5 @@
 import { request } from './request'
 
-
 export interface Article {
   tid: number
   title: string
@@ -8,57 +7,48 @@ export interface Article {
   publish_date: string
   magnet: string
   preview_images: string
-  sub_type: string
+  category: string
   size: number
   in_stock: boolean
   detail_url: string
 }
 
 export interface ArticleFilter {
+  page: number
+  page_size: number
   keyword: string
-  category: string
+  section: string
 }
-
 
 export interface ArticleListResult {
   items: Article[]
-  total: number,
-  hasMore: boolean,
+  total: number
+  hasMore: boolean
   page: number
   pageSize: number
 }
 
 export interface Category {
-  category: string
+  name: string
   count: number
-  items?: {
-    category: string
-    count: number
-  }[]
 }
 
+export interface Section {
+  name: string
+  count: number
+  categories?: Category[]
+}
 
-
-export function getArticles(params: {
-  page: number
-  pageSize: number
-  filter: ArticleFilter
-}) {
+export function getArticles(data: ArticleFilter) {
   return request<ArticleListResult>({
     url: '/articles/search',
     method: 'post',
-    data: {
-      page: params.page,
-      per_page: params.pageSize,
-      keyword: params.filter.keyword,
-      section: params.filter.category,
-      publish_date_range: {},
-    },
+    data,
   })
 }
 
 export function getCategories() {
-  return request<[Category]>({ url: '/articles/categories' })
+  return request<Section[]>({ url: '/articles/categories' })
 }
 
 export function downloadArticle(tid: number) {

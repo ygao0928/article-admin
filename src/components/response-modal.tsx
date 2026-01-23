@@ -55,7 +55,7 @@ export function ResponsiveModal({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-      <DrawerContent className='px-4'>
+      <DrawerContent className='px-4 py-4'>
         <DrawerHeader className='text-left'>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription />

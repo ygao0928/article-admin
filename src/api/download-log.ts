@@ -11,7 +11,7 @@ export interface DownloadLog {
   id: number
   tid: number
   section: string
-  sub_type: string
+  category: string
   title: string
   size: number
   preview_images: string
