@@ -1,6 +1,6 @@
 import { type SVGProps } from 'react';
 import { Root as Radio, Item } from '@radix-ui/react-radio-group'
-import { CircleCheck, Monitor, RotateCcw } from 'lucide-react'
+import { CircleCheck, Monitor, RotateCcw, Smartphone } from 'lucide-react'
 import { IconDir } from '@/assets/custom/icon-dir';
 import { IconLayoutCompact } from '@/assets/custom/icon-layout-compact';
 import { IconLayoutDefault } from '@/assets/custom/icon-layout-default';
@@ -14,9 +14,29 @@ import { cn } from '@/lib/utils';
 import { useDirection } from '@/context/direction-provider';
 import { type Collapsible, useLayout } from '@/context/layout-provider';
 import { useTheme } from '@/context/theme-provider';
+import { useIsMobile } from '@/hooks/use-mobile.tsx';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useSidebar } from './ui/sidebar';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -26,6 +46,7 @@ export function ConfigDrawer() {
   const { resetDir } = useDirection()
   const { resetTheme } = useTheme()
   const { resetLayout } = useLayout()
+  const isMobile = useIsMobile()
 
   const handleReset = () => {
     setOpen(true)
@@ -44,7 +65,11 @@ export function ConfigDrawer() {
           aria-describedby='config-drawer-description'
           className='rounded-full'
         >
-          <Monitor aria-hidden='true' />
+          {isMobile ? (
+            <Smartphone aria-hidden='true' />
+          ) : (
+            <Monitor aria-hidden='true' />
+          )}
         </Button>
       </SheetTrigger>
       <SheetContent className='flex flex-col'>

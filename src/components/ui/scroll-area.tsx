@@ -30,7 +30,7 @@ function ScrollArea({
         {children}
       </ScrollAreaPrimitive.Viewport>
       {/*隐藏滚动条*/}
-      {/*<ScrollBar orientation={orientation} />*/}
+      {orientation === 'vertical' && <ScrollBar orientation={orientation} />}
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
   )
@@ -57,7 +57,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         data-slot='scroll-area-thumb'
-        className='relative flex-1 rounded-full bg-border'
+        className='scrollbar-hide relative flex-1 rounded-full bg-border'
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   )

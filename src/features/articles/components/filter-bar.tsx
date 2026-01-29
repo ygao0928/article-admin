@@ -50,7 +50,7 @@ export function FilterBar({
   }, [value.section])
   return (
     <div className='flex items-center gap-2'>
-      <ScrollArea ref={scrollAreaRef} className='mb-2 w-full scrollbar-hide'>
+      <ScrollArea ref={scrollAreaRef} className='mb-2 w-full scrollbar-hide' orientation='horizontal'>
         <Tabs
           value={value.section || 'all'}
           onValueChange={(v) =>
