@@ -35,9 +35,9 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/logo.png',
+            src: '/logo_512.png',
             sizes: '512x512',
-            type: 'image/jpeg"',
+            type: 'image/png"',
           }
         ],
       },
