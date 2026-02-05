@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import type { ArticleFilter, Section } from '@/api/article.ts'
-import { Button } from '@/components/ui/button.tsx'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -8,16 +7,13 @@ interface FilterBarProps {
   value: ArticleFilter
   categories: Section[]
   onChange: (v: ArticleFilter) => void
-  onImport?: (file: File) => void
 }
 
 export function FilterBar({
   value,
   categories,
   onChange,
-  onImport,
 }: FilterBarProps) {
-  const fileRef = useRef<HTMLInputElement>(null)
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const tabsListRef = useRef<HTMLDivElement>(null)
@@ -67,31 +63,7 @@ export function FilterBar({
           </TabsList>
         </Tabs>
       </ScrollArea>
-      {onImport && (
-        <>
-          <Button
-            type='button'
-            size='sm'
-            className='bg-green-600 text-white hover:bg-green-700'
-            onClick={() => fileRef.current?.click()}
-          >
-            注入灵力
-          </Button>
 
-          <input
-            ref={fileRef}
-            type='file'
-            hidden
-            accept='.xls,.xlsx,.csv'
-            onChange={(e) => {
-              const file = e.currentTarget.files?.[0]
-              if (!file) return
-              onImport?.(file)
-              e.currentTarget.value = ''
-            }}
-          />
-        </>
-      )}
     </div>
   )
 }

@@ -59,11 +59,11 @@ export function ArticleCard({
   }
 
   return (
-    <Card className='group glass-card relative flex w-full max-w-full flex-col gap-4 overflow-hidden rounded-2xl p-4 transition-all duration-300 sm:flex-row'>
+    <Card className='group glass-card relative flex w-full max-w-full flex-col overflow-hidden rounded-2xl  transition-all duration-300 py-0'>
       <div className='absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-pink-400 via-sky-400 to-blue-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
       {/* 图片预览 */}
       {images.length > 0 && mode !== 'hide' && (
-        <div className='relative h-48 w-full cursor-pointer overflow-hidden rounded-xl sm:h-48 sm:w-48 sm:flex-shrink-0' onClick={onImgClick}>
+        <div className='relative h-48 w-full cursor-pointer overflow-hidden rounded-xl' onClick={onImgClick}>
           {!imageError && images.length > 0 ? (
             <>
               <img
@@ -99,7 +99,7 @@ export function ArticleCard({
       )}
 
       {/* 内容区 */}
-      <div className='flex min-w-0 flex-1 flex-col gap-3'>
+      <div className='flex min-w-0 flex-1 flex-col gap-3 px-2'>
         <div className='flex flex-wrap items-center gap-2 text-xs'>
           <Badge variant='default' className='shadow-sm'>
             {article.website}
@@ -153,13 +153,13 @@ export function ArticleCard({
           </span>
         </div>
 
-        <div className='mt-2 flex justify-end gap-2 pt-2'>
-          <Button size='sm' className='gap-2' onClick={handleCopyMagnet}>
+        <div className='grid grid-cols-2 gap-2 pb-2'>
+          <Button size='sm' className='gap-2 w-full' onClick={handleCopyMagnet} >
             <Copy className='h-4 w-4' />
             复制
           </Button>
 
-          <DownloaderButton articleId={article.tid} />
+          <DownloaderButton articleIdList={[article.tid]} />
         </div>
       </div>
     </Card>

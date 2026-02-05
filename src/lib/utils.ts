@@ -10,7 +10,7 @@ export function sleep(ms: number = 1000) {
 }
 
 export function getPageNumbers(currentPage: number, totalPages: number) {
-  const maxVisiblePages = 4 // Maximum number of page buttons to show
+  const maxVisiblePages = 5 // Maximum number of page buttons to show
   const rangeWithDots = []
 
   if (totalPages <= maxVisiblePages) {
@@ -21,7 +21,7 @@ export function getPageNumbers(currentPage: number, totalPages: number) {
     rangeWithDots.push(1)
 
     if (currentPage <= 3) {
-      for (let i = 2; i <= 3; i++) {
+      for (let i = 2; i <= 4; i++) {
         rangeWithDots.push(i)
       }
       rangeWithDots.push('...', totalPages)

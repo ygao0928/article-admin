@@ -44,7 +44,7 @@ export function Dashboard() {
 
       {/* ===== Main ===== */}
       <Main>
-        <div className='space-y-6 p-6'>
+        <div className='space-y-6 p-2'>
           <DownloadDashboard data={state ?? {download_count:0,section_count:[]}} />
           <SummaryCards data={data ?? []} />
           <CategoryCards data={data ?? []} />

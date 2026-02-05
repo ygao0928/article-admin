@@ -18,7 +18,10 @@ export interface ArticleFilter {
   page: number
   page_size: number
   keyword: string
+  website: string
   section: string
+  category: string
+  date_range: { from: string; to: string }
 }
 
 export interface ArticleListResult {
@@ -69,6 +72,21 @@ export function manulDownloadArticle(
   return request({
     url: '/articles/download/manul',
     params: { tid, downloader, save_path: savePath },
+  })
+}
+
+export function batchDownloadArticle(tids: string) {
+  return request({ url: '/articles/download/batch', params: { tids } })
+}
+
+export function batchManulDownloadArticle(
+  tids: string,
+  downloader: string,
+  savePath: string
+) {
+  return request({
+    url: '/articles/download/manul/batch',
+    params: { tids, downloader, save_path: savePath },
   })
 }
 

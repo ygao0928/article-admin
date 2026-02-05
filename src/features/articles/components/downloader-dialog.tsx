@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Download, FolderOpen, HardDrive, Check } from 'lucide-react'
-import { toast } from 'sonner'
-import {
-  type ArticleListResult,
-  batchDownloadArticle,
-  batchManulDownloadArticle,
-} from '@/api/article'
 import { fetchDownloaderList } from '@/api/config'
-import { getCookie, setCookie } from '@/lib/cookies.ts'
+import { getCookie } from '@/lib/cookies.ts'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -34,20 +28,18 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-interface DownloaderDialogProps {
-  articleIdList: number[]
-  trigger?: React.ReactNode
-}
-
-const DOWNLOAD_PREF_KEY = 'download:last-selection'
-
-export function DownloaderButton({
-  articleIdList,
-  trigger,
-}: DownloaderDialogProps) {
-  const [open, setOpen] = useState(false)
-  const queryClient = useQueryClient()
-
+export function DownloaderDialog({
+  open,
+  isPending,
+  onOpenChange,
+  onDownloadClick,
+}: {
+  onDownloadClick: (data: FormValues) => void
+  onClose: () => void
+  onOpenChange: (open: boolean) => void
+  isPending: boolean
+  open: boolean
+}) {
   const { data: downloaders, isLoading } = useQuery({
     queryKey: ['downloaders'],
     queryFn: async () => {
@@ -75,58 +67,10 @@ export function DownloaderButton({
     (d) => d.id === selectedDownloader
   )
 
-  const updateSockStatus = () => {
-    queryClient.setQueriesData(
-      { queryKey: ['articles'], exact: false },
-      (oldData: ArticleListResult) => {
-        if (!oldData) return oldData
-        return {
-          ...oldData,
-          items: oldData.items.map((item) =>
-            articleIdList.includes(item.tid)
-              ? { ...item, in_stock: true }
-              : item
-          ),
-        }
-      }
-    )
-  }
-
-  const submitMutation = useMutation({
-    mutationFn: async (values: FormValues) => {
-      if (selectedDownloader === 'auto') {
-        return await batchDownloadArticle(articleIdList.join(','))
-      } else {
-        return await batchManulDownloadArticle(
-          articleIdList.join(','),
-          values.downloader,
-          values.savePath
-        )
-      }
-    },
-    onSuccess: (res) => {
-      if (res.code === 0) {
-        toast.success(res.message)
-        setOpen(false)
-        updateSockStatus()
-        setCookie(
-          DOWNLOAD_PREF_KEY,
-          JSON.stringify({
-            downloader: selectedDownloader,
-            savePath: form.getValues('savePath'),
-          })
-        )
-      }
-    },
-    onError: (err: Error) => {
-      toast.error(`推送失败，请重试:${err}`)
-    },
-  })
-
   useEffect(() => {
     if (!open) return
 
-    const raw = getCookie(DOWNLOAD_PREF_KEY)
+    const raw = getCookie('download:last-selection')
     if (!raw) return
 
     try {
@@ -144,19 +88,9 @@ export function DownloaderButton({
   return (
     <ResponsiveModal
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={onOpenChange}
       title='选择下载器'
       description='选择要使用的下载器和保存目录'
-      trigger={
-        trigger ? (
-          trigger
-        ) : (
-          <Button size='sm' variant='outline' className='gap-2 w-full'>
-            <Download className='h-4 w-4' />
-            下载
-          </Button>
-        )
-      }
     >
       {isLoading ? (
         <div className='flex h-48 items-center justify-center'>
@@ -174,9 +108,7 @@ export function DownloaderButton({
       ) : (
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit((values) =>
-              submitMutation.mutate(values)
-            )}
+            onSubmit={form.handleSubmit((values) => onDownloadClick(values))}
             className='space-y-6 py-4'
           >
             {/* 下载器选择 */}
@@ -335,21 +267,9 @@ export function DownloaderButton({
             )}
 
             {/* 提交按钮 */}
-            <div className='flex justify-end gap-2 pt-4'>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => setOpen(false)}
-                disabled={submitMutation.isPending}
-              >
-                取消
-              </Button>
-              <Button
-                type='submit'
-                disabled={submitMutation.isPending}
-                className='w-full'
-              >
-                {submitMutation.isPending ? (
+            <div className='flex justify-center pt-4'>
+              <Button type='submit' disabled={isPending} className='w-full'>
+                {isPending ? (
                   <>
                     <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
                     推送中...

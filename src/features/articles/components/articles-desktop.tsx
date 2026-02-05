@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { getArticles, getCategories, uploadArticle } from '@/api/article.ts'
+import { getArticles, getCategories } from '@/api/article.ts'
 import { useSearch } from '@/context/search-provider.tsx'
 import { useDebounce } from '@/hooks/use-debounce.tsx'
-import { Progress } from '@/components/ui/progress.tsx'
 import { EmptyState } from '@/components/empty.tsx'
 import { ImagePreview } from '@/components/image-preview.tsx'
 import { Loading } from '@/components/loading.tsx'
@@ -17,12 +15,16 @@ export function ArticlesDesktop() {
   const debouncedKeyword = useDebounce(keyword, 300)
   const [filter, setFilter] = useState({
     page: 1,
-    page_size: 30,
+    page_size: 28,
     keyword: '',
+    website: '',
     section: '',
+    category: '',
+    date_range: {
+      from: '',
+      to: '',
+    },
   })
-  const [progress, setProgress] = useState(0)
-  const [importing, setImporting] = useState(false)
   const [previewImages, setPreviewImages] = useState<string[]>([])
   const [imgPreviewOpen, setImgPreviewOpen] = useState(false)
   const [alt, setAlt] = useState('')
@@ -53,36 +55,13 @@ export function ArticlesDesktop() {
           value={filter}
           categories={categories || []}
           onChange={(v) => setFilter(v)}
-          onImport={async (file) => {
-            setImporting(true)
-            setProgress(0)
-            try {
-              const res = await uploadArticle(file, (p) => {
-                setProgress(p)
-              })
-              if (res.code === 0) {
-                toast.success(res.message)
-              }
-            } finally {
-              setImporting(false)
-            }
-          }}
         />
-        {importing && (
-          <div className='px-2'>
-            <Progress value={progress} />
-            <div className='mt-1 text-sm text-muted-foreground'>
-              正在导入 {progress}%
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* ② 表格区域（滚动容器） */}
       <div className='flex-1 space-y-2 overflow-auto'>
         {isLoading && <Loading />}
         {data?.items.length === 0 && <EmptyState />}
-        <div className='grid grid-cols-1 gap-4 xl:grid-cols-2'>
+        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
           {data?.items.map((article) => (
             <ArticleCard
               key={article.tid}
@@ -109,7 +88,6 @@ export function ArticlesDesktop() {
         }}
       ></ImagePreview>
 
-      {/* ④ 分页 */}
       <div className='sticky bottom-0 z-30 mt-2'>
         <CommonPagination
           page={filter.page}

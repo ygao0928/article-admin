@@ -18,7 +18,13 @@ export function ArticlesMobile() {
     page: 1,
     page_size: 10,
     keyword: '',
+    website: '',
     section: '',
+    category: '',
+    date_range: {
+      from: '',
+      to: '',
+    },
   })
 
   const loadMoreRef = useRef<HTMLDivElement>(null)
