@@ -112,3 +112,19 @@
 .scrollbar-hide::-webkit-scrollbar {
     display: none;             /* Chrome / Safari */
 }
+
+.safe-area-top {
+    padding-top: env(safe-area-inset-top);
+}
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+@supports (padding: env(safe-area-inset-top)) {
+    .safe-top {
+        padding-top: env(safe-area-inset-top);
+    }
+    .safe-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}

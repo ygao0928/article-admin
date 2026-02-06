@@ -63,7 +63,7 @@ export function ArticleCard({
       <div className='absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-pink-400 via-sky-400 to-blue-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
       {/* 图片预览 */}
       {images.length > 0 && mode !== 'hide' && (
-        <div className='relative h-48 w-full cursor-pointer overflow-hidden rounded-xl' onClick={onImgClick}>
+        <div className='relative w-full aspect-[16/9] cursor-pointer overflow-hidden rounded-xl' onClick={onImgClick}>
           {!imageError && images.length > 0 ? (
             <>
               <img
@@ -75,7 +75,6 @@ export function ArticleCard({
                 onError={() => setImageError(true)}
               />
 
-              {/* 图片数量提示 */}
               {images.length > 1 && (
                 <div className='absolute right-2 bottom-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-xs text-white backdrop-blur-sm'>
                   <ImageIcon className='h-3 w-3' />
@@ -83,7 +82,6 @@ export function ArticleCard({
                 </div>
               )}
 
-              {/* 放大图标 */}
               <div className='absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
                 <div className='rounded-full bg-white/20 p-3 backdrop-blur-sm'>
                   <ImageIcon className='h-6 w-6 text-white' />
@@ -99,7 +97,7 @@ export function ArticleCard({
       )}
 
       {/* 内容区 */}
-      <div className='flex min-w-0 flex-1 flex-col gap-3 px-2'>
+      <div className='flex min-w-0 flex-1 flex-col gap-3 p-2'>
         <div className='flex flex-wrap items-center gap-2 text-xs'>
           <Badge variant='default' className='shadow-sm'>
             {article.website}
@@ -153,7 +151,7 @@ export function ArticleCard({
           </span>
         </div>
 
-        <div className='grid grid-cols-2 gap-2 pb-2'>
+        <div className='grid grid-cols-2 gap-2'>
           <Button size='sm' className='gap-2 w-full' onClick={handleCopyMagnet} >
             <Copy className='h-4 w-4' />
             复制

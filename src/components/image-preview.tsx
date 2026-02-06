@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import 'react-medium-image-zoom/dist/styles.css'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
@@ -24,20 +24,35 @@ export function ImagePreview({
   const prevImage = () => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
   }
+
+  useEffect(() => {
+    if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCurrentIndex(0)
+    }
+  }, [open, images])
+
   if (!open) return null
 
   return (
-    <div title='图片预览' className='fixed inset-0 z-50 flex items-center justify-center bg-black/90'>
+    <div
+      title='图片预览'
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black/90'
+      onClick={onClose}
+    >
       <Button
         size='icon'
         variant='ghost'
         onClick={onClose}
-        className='absolute top-4 right-4 text-white hover:bg-white/10'
+        className='fixed top-[calc(env(safe-area-inset-top)+1rem)] right-4 z-[60] rounded-full bg-black/60 text-white hover:bg-black/80'
       >
         <X className='h-6 w-6' />
       </Button>
-      <div className='relative rounded-lg bg-black/95 p-2'>
-        <div className="flex items-center justify-center">
+      <div
+        className='relative rounded-lg bg-black/95 p-2'
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className='flex items-center justify-center'>
           <TransformWrapper
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
@@ -46,7 +61,7 @@ export function ImagePreview({
               <img
                 src={images[currentIndex]}
                 alt={`${alt}-${currentIndex}`}
-                className='w-full h-full rounded-lg object-contain'
+                className='h-full w-full rounded-lg object-contain'
               />
             </TransformComponent>
           </TransformWrapper>
@@ -58,7 +73,7 @@ export function ImagePreview({
               size='icon'
               variant='ghost'
               onClick={prevImage}
-              className='absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-white'
+              className='fixed top-1/2 left-4 z-[60] -translate-y-1/2 rounded-full bg-black/60 text-white hover:bg-black/80'
             >
               <ChevronLeft className='h-6 w-6' />
             </Button>
@@ -67,7 +82,7 @@ export function ImagePreview({
               size='icon'
               variant='ghost'
               onClick={nextImage}
-              className='absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-white'
+              className='fixed top-1/2 right-4 z-[60] -translate-y-1/2 rounded-full bg-black/60 text-white hover:bg-black/80'
             >
               <ChevronRight className='h-6 w-6' />
             </Button>
@@ -76,7 +91,7 @@ export function ImagePreview({
 
         {/* 缩略图 */}
         {images.length > 1 && (
-          <div className='mt-4 flex gap-2 overflow-x-auto pb-2 max-w-[99vw]'>
+          <div className='mt-4 flex max-w-[99vw] gap-2 overflow-x-auto pb-2'>
             {images.map((img, index) => (
               <button
                 key={index}
