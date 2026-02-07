@@ -20,6 +20,13 @@ export function NavigationProgress() {
       ref={ref}
       shadow={true}
       height={2}
+      containerStyle={{
+        position: 'fixed',
+        top: 'env(safe-area-inset-top)', // 从安全区域下方开始
+        left: 0,
+        right: 0,
+        zIndex: 9999,
+      }}
     />
   )
 }

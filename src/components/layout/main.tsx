@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { useSyncStatusBar } from '@/hooks/use-sync-status-bar.tsx'
 
 type MainProps = React.HTMLAttributes<HTMLElement> & {
   fixed?: boolean
@@ -8,7 +7,6 @@ type MainProps = React.HTMLAttributes<HTMLElement> & {
 }
 
 export function Main({ fixed, className, fluid, ...props }: MainProps) {
-  useSyncStatusBar()
   return (
     <main
       data-layout={fixed ? 'fixed' : 'auto'}

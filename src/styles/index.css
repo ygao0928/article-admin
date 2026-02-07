@@ -113,18 +113,25 @@
     display: none;             /* Chrome / Safari */
 }
 
-.safe-area-top {
-    padding-top: env(safe-area-inset-top);
-}
-.safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+body {
+    color-scheme: inherit;
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
+    padding-left: var(--safe-area-inset-left);
+    padding-right: var(--safe-area-inset-right);
 }
 
-@supports (padding: env(safe-area-inset-top)) {
-    .safe-top {
-        padding-top: env(safe-area-inset-top);
-    }
-    .safe-bottom {
-        padding-bottom: env(safe-area-inset-bottom);
-    }
+/* 如果你的root div需要全屏 */
+#root {
+    min-height: 100vh;
+    min-height: 100dvh; /* 动态视口高度，更准确 */
+}
+
+/* 状态栏背景色适配 */
+.safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+.safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }

@@ -228,7 +228,7 @@ export default function TaskManager() {
                         ></Textarea>
                       </FormControl>
                       <FormDescription>
-                        <span>参数列表: {func_arg}</span>
+                        <span>参数列表: {func_arg?.join(',')}</span>
                       </FormDescription>
                     </FormItem>
                   )}

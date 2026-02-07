@@ -30,8 +30,8 @@ export default defineConfig({
         name: 'Immortal',
         short_name: 'Immortal',
         description: 'Immortal',
-        theme_color: '#09090b',
-        background_color: '#09090b',
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
         display: 'standalone',
         icons: [
           {

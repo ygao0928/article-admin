@@ -6,13 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>修仙 | 青灯不灭，灵气如潮</title>
     <meta name="title" content="一朝破境，踏碎凡尘" />
-    <meta name="theme-color" content="#fff" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- 动态主题色，需要通过JS更新 -->
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- iOS特定设置 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Android特定设置 -->
+    <meta name="mobile-web-app-capable" content="yes" />
   </head>
 
   <body>
-    <div id="root" class="h-screen safe-area-top safe-area-bottom"></div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

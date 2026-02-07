@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
+import { parseOklchToHex } from '@/lib/utils.ts'
 
 type Theme = 'dark' | 'light' | 'system'
 type ResolvedTheme = Exclude<Theme, 'system'>
@@ -7,6 +8,13 @@ type ResolvedTheme = Exclude<Theme, 'system'>
 const DEFAULT_THEME = 'system'
 const THEME_COOKIE_NAME = 'vite-ui-theme'
 const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 year
+
+const getThemeColors = () => {
+  return {
+    light: parseOklchToHex('oklch(1 0 0)'),
+    dark: parseOklchToHex('oklch(0.129 0.042 264.695)'), // 自动转换
+  }
+}
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -52,6 +60,30 @@ export function ThemeProvider({
     return theme as ResolvedTheme
   }, [theme])
 
+  // 更新 meta theme-color
+  const updateThemeColor = (currentTheme: ResolvedTheme) => {
+    const THEME_COLORS = getThemeColors()
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', THEME_COLORS[currentTheme])
+    }
+  }
+
+  // 更新 color-scheme（告诉浏览器当前使用的配色方案）
+  const updateColorScheme = (currentTheme: ResolvedTheme) => {
+    const root = document.documentElement
+    root.style.colorScheme = currentTheme
+
+    // 同时设置 meta 标签
+    let metaColorScheme = document.querySelector('meta[name="color-scheme"]')
+    if (!metaColorScheme) {
+      metaColorScheme = document.createElement('meta')
+      metaColorScheme.setAttribute('name', 'color-scheme')
+      document.head.appendChild(metaColorScheme)
+    }
+    metaColorScheme.setAttribute('content', currentTheme)
+  }
+
   useEffect(() => {
     const root = window.document.documentElement
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -59,6 +91,10 @@ export function ThemeProvider({
     const applyTheme = (currentResolvedTheme: ResolvedTheme) => {
       root.classList.remove('light', 'dark') // Remove existing theme classes
       root.classList.add(currentResolvedTheme) // Add the new theme class
+      requestAnimationFrame(() => {
+        updateColorScheme(currentResolvedTheme)
+        updateThemeColor(currentResolvedTheme)
+      })
     }
 
     const handleChange = () => {
