@@ -1,8 +1,6 @@
-'use client'
-
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Trash2, Plus, Copy, Zap, HelpCircle } from 'lucide-react'
+import { Trash2, Copy, Zap, HelpCircle } from 'lucide-react'
 import { addToken, deleteToken, listToken } from '@/api/token.ts'
 import { Button } from '@/components/ui/button'
 import {
@@ -141,7 +139,7 @@ export default function TokenManager() {
           </div>
 
           <Button onClick={() => setOpen(true)} className='gap-2'>
-            <Plus className='h-4 w-4' /> 申领令符
+            申领令符
           </Button>
         </div>
       </div>

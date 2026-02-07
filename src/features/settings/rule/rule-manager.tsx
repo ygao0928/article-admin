@@ -3,7 +3,7 @@ import * as z from 'zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, Regex } from 'lucide-react'
+import { Regex } from 'lucide-react'
 import { toast } from 'sonner'
 import { getCategories } from '@/api/article.ts'
 import { fetchDownloaderList } from '@/api/config.ts'
@@ -142,12 +142,12 @@ export default function RulesManager() {
   return (
     <>
       <ResponsiveModal
-        title={editRule ? '编辑规则' : '创建新规则'}
+        title={editRule ? '编辑秩序' : '创建秩序'}
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         trigger={
           <Button onClick={() => setEditRule(null)} className='rounded-full'>
-            <Plus /> 新增规则
+            建立秩序
           </Button>
         }
       >

@@ -3,7 +3,7 @@ import * as z from 'zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Clock, Plus, Zap } from 'lucide-react'
+import { Clock, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   addTask,
@@ -168,9 +168,8 @@ export default function TaskManager() {
             trigger={
               <Button
                 onClick={() => setEditingTask(null)}
-                className='rounded-full'
-              >
-                <Plus /> 录入阵法
+                className='rounded-full'>
+                铭刻阵法
               </Button>
             }
           >
