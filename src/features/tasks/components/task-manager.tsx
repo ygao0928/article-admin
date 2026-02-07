@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import * as z from 'zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, Clock, Zap } from 'lucide-react'
+import { Clock, Plus, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   addTask,
@@ -71,6 +71,11 @@ export default function TaskManager() {
     },
     staleTime: 5 * 60 * 1000,
   })
+
+  const args_list_to_json_str = (arg_list: string[]) => {
+    const obj = Object.fromEntries(arg_list.map((key) => [key, '']))
+    return JSON.stringify(obj)
+  }
 
   const saveTaskMutation = useMutation({
     mutationFn: async (values: taskValues) => {
@@ -228,7 +233,9 @@ export default function TaskManager() {
                         ></Textarea>
                       </FormControl>
                       <FormDescription>
-                        <span>参数列表: {func_arg?.join(',')}</span>
+                        <span>
+                          参考参数: {args_list_to_json_str(func_arg || [])}
+                        </span>
                       </FormDescription>
                     </FormItem>
                   )}

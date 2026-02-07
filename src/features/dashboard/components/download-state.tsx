@@ -47,7 +47,7 @@ const LEVELS = [
     icon: '🌿',
   },
   {
-    threshold: 2000,
+    threshold: 200,
     label: '结丹',
     color: 'text-green-600 dark:text-green-400',
     bgColor: 'bg-green-50 dark:bg-green-950',
@@ -55,7 +55,7 @@ const LEVELS = [
     icon: '🌳',
   },
   {
-    threshold: 20000,
+    threshold: 2000,
     label: '元婴',
     color: 'text-orange-600 dark:text-orange-400',
     bgColor: 'bg-orange-50 dark:bg-orange-950',
@@ -63,7 +63,7 @@ const LEVELS = [
     icon: '⭐',
   },
   {
-    threshold: 50000,
+    threshold: 5000,
     label: '化神',
     color: 'text-purple-600 dark:text-purple-400',
     bgColor: 'bg-purple-50 dark:bg-purple-950',
